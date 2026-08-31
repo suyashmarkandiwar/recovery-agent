@@ -1,0 +1,36 @@
+import sys
+import os
+from datetime import date, timedelta
+from sqlmodel import Session, select
+from passlib.context import CryptContext
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from app.db.database import engine, create_db_and_tables
+from app.db.models import Employee, Invoice
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def seed():
+    create_db_and_tables()
+    
+    with Session(engine) as session:
+        if not session.exec(select(Employee)).first():
+            admin = Employee(username="admin", hashed_password=pwd_context.hash("password123"))
+            session.add(admin)
+            
+        if not session.exec(select(Invoice)).first():
+            today = date.today()
+            invoices = [
+                Invoice(client_name="Alpha Co", client_email="alpha@example.com", amount=500.0, due_date=today - timedelta(days=5)),
+                Invoice(client_name="Beta LLC", client_email="beta@example.com", amount=1200.0, due_date=today - timedelta(days=15)),
+                Invoice(client_name="Gamma Inc", client_email="gamma@example.com", amount=3400.0, due_date=today - timedelta(days=25)),
+                Invoice(client_name="Delta Corp", client_email="delta@example.com", amount=8900.0, due_date=today - timedelta(days=35))
+            ]
+            session.add_all(invoices)
+            
+        session.commit()
+        print("Neon database seeded successfully!")
+
+if __name__ == "__main__":
+    seed()
