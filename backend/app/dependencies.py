@@ -12,7 +12,7 @@ def get_current_employee(request: Request, session: Session = Depends(get_sessio
     
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        employee_id: int = payload.get("sub")
+        employee_id: int | None = payload.get("sub")
         if employee_id is None:
             raise HTTPException(status_code=401, detail="Invalid token payload")
     except JWTError:
