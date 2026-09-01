@@ -7,7 +7,7 @@ from app.scheduler import process_overdue_invoices
 from fastapi import APIRouter
 from app.scheduler import process_overdue_invoices
 from app.routes import razorpay_webhook
-
+from app.routes import sendgrid_inbound
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -32,6 +32,8 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(invoices.router, prefix="/api/invoices", tags=["Invoices"])
 
 app.include_router(razorpay_webhook.router, prefix="/api/webhooks", tags=["Webhooks"])
+
+app.include_router(sendgrid_inbound.router, prefix="/api/email", tags=["Email"])
 
 @app.get("/")
 def health_check():

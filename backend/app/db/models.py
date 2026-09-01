@@ -24,7 +24,7 @@ class Invoice(SQLModel, table=True):
 
 class AuditLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    invoice_id: int = Field(foreign_key="invoice.id")
+    invoice_id: Optional[int] = Field(default=None, foreign_key="invoice.id")
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     event_type: str 
     payload: Optional[str] = None 
