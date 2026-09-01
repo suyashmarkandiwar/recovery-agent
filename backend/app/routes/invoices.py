@@ -6,8 +6,17 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends
 from app.integrations.sendgrid_client import send_email
 import json
+from datetime import date  
+from pydantic import BaseModel  
+from typing import Literal
 
 router = APIRouter()
+
+class NegotiatedDateRequest(BaseModel):
+    proposed_date: date
+
+class WriteOffRequest(BaseModel):
+    outcome: Literal["BAD_DEBT", "LEGAL"]
 
 @router.post("/run-recovery")
 def trigger_recovery():
@@ -24,19 +33,85 @@ async def resend_payment_link(invoice_id: int, session: Session = Depends(get_se
     if invoice.status == "PAID":
         return {"message": "Invoice is already paid."}
 
-    # 1. Log the manual action
+    # 1. Clear requires_call + log the action
+    invoice.requires_call = False
     assert invoice.id is not None
     audit = AuditLog(
         invoice_id=invoice.id,
         event_type="manual_resend",
-        payload=json.dumps({"action": "Manual link resend triggered"})
+        payload=json.dumps({"action": "Payment link resent. requires_call cleared. Awaiting Razorpay webhook for PAID status."})
     )
+    session.add(invoice)
     session.add(audit)
     session.commit()
 
-    # 2. Trigger your SendGrid email
+    # 2. Send payment link via email
     subject = f"Payment Reminder for Invoice #{invoice.id}"
     body = f"Please pay your outstanding balance using this link: {invoice.razorpay_short_url}"
     send_email(to_email=invoice.client_email, subject=subject, body=body)
 
-    return {"status": "success", "message": f"Payment link manually resent for Invoice #{invoice_id}"}
+    return {"status": "success", "message": f"Payment link resent for Invoice #{invoice_id}"}
+
+@router.patch("/{invoice_id}/negotiated-date")
+def set_negotiated_date(
+    invoice_id: int,
+    body: NegotiatedDateRequest,
+    session: Session = Depends(get_session)
+):
+    invoice = session.get(Invoice, invoice_id)
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    proposed_date = body.proposed_date
+    today = date.today()
+    delta_days = (proposed_date - invoice.due_date).days
+    # Server-side re-validation of the 30-day cap
+    if proposed_date < today or delta_days > 30:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid date: {'past date' if proposed_date < today else 'exceeds 30-day cap'}"
+        )
+    invoice.pause_followups_until = proposed_date
+    invoice.requires_call = False
+    assert invoice.id is not None
+    audit = AuditLog(
+        invoice_id=invoice.id,
+        event_type="negotiated_date_set",
+        payload=json.dumps({
+            "proposed_date": str(proposed_date),
+            "due_date": str(invoice.due_date),
+            "delta_days": delta_days
+        })
+    )
+    session.add(invoice)
+    session.add(audit)
+    session.commit()
+    return {"status": "success", "pause_followups_until": str(proposed_date)}
+
+@router.patch("/{invoice_id}/write-off")
+def write_off_invoice(
+    invoice_id: int,
+    body: WriteOffRequest,
+    session: Session = Depends(get_session)
+):
+    invoice = session.get(Invoice, invoice_id)
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    if invoice.status in ("PAID", "BAD_DEBT", "LEGAL"):
+        raise HTTPException(status_code=400, detail=f"Invoice already in terminal status: {invoice.status}")
+    previous_status = invoice.status
+    invoice.status = body.outcome
+    invoice.requires_call = False
+    assert invoice.id is not None
+    audit = AuditLog(
+        invoice_id=invoice.id,
+        event_type="invoice_written_off",
+        payload=json.dumps({
+            "outcome": body.outcome,
+            "previous_status": previous_status,
+            "reason": "Customer refused or unreachable"
+        })
+    )
+    session.add(invoice)
+    session.add(audit)
+    session.commit()
+    return {"status": "success", "invoice_status": body.outcome}
