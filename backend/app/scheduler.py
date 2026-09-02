@@ -36,8 +36,8 @@ def process_overdue_invoices():
                 continue
             
             # 3.3 4-Day Cooldown Check
-            # if invoice.last_contacted and (today - invoice.last_contacted).days < 4:
-            #     continue
+            if invoice.last_contacted and (today - invoice.last_contacted).days < 4:
+                continue
 
             # Target identified! We will inject Groq and SendGrid here next.
             # 3.4 Groq Call
@@ -84,5 +84,5 @@ def process_overdue_invoices():
                 session.commit()
                 print(f"Successfully sent {tone} email to {invoice.client_name}!")
 
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(process_overdue_invoices, 'cron', hour=8, minute=0) # 3.1 Runs daily at 8:00 AM
+scheduler = BackgroundScheduler()
+scheduler.add_job(process_overdue_invoices, 'cron', hour=8, minute=0) # 3.1 Runs daily at 8:00 AM

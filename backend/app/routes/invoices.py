@@ -5,12 +5,13 @@ from app.db.models import Invoice, AuditLog
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends
 from app.integrations.sendgrid_client import send_email
+from app.security import get_current_user
 import json
 from datetime import date  
 from pydantic import BaseModel  
 from typing import Literal
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 class NegotiatedDateRequest(BaseModel):
     proposed_date: date

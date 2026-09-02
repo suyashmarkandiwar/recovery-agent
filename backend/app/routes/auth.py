@@ -19,7 +19,7 @@ def login(login_data: LoginRequest, response: Response, session: Session = Depen
     if not employee or not verify_password(login_data.password, employee.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    access_token = create_access_token(data={"sub": employee.id})
+    access_token = create_access_token(data={"sub": str(employee.id)})
     is_prod = ENVIRONMENT == "PROD"
     
     # Conditionally setting the cookie as discussed in your diagram!

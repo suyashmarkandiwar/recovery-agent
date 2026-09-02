@@ -9,14 +9,61 @@ __pycache__/
 .venv/
 venv/
 env/
+backend/venv/
 
 # Environment files
 .env
+.env.*
+!.env.example
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Node / Frontend (future)
+node_modules/
+.next/
+dist/
+build/
+
+# Uploads / temp
+uploads/
+tmp/
+*.tmp
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# MyPy / type-checking
+.mypy_cache/
+
+# Alembic
+alembic/versions/*.pyc
+
+# ngrok config
+ngrok.yml
+.ngrok2/
+
+# Tests
+backend/tests/
+tests/
+
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
