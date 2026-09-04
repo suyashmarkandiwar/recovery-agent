@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.scheduler import process_overdue_invoices
 from app.db.database import get_session
 from app.db.models import Invoice, AuditLog
-from sqlalchemy.orm import Session
+from sqlmodel import Session, select
 from fastapi import HTTPException, Depends
 from app.integrations.sendgrid_client import send_email
 from app.security import get_current_user
@@ -17,12 +17,23 @@ class NegotiatedDateRequest(BaseModel):
     proposed_date: date
 
 class WriteOffRequest(BaseModel):
-    outcome: Literal["BAD_DEBT", "LEGAL"]
+    outcome: Literal["BAD_DEBT", "LEGAL", "OVERDUE"]
 
 @router.post("/run-recovery")
 def trigger_recovery():
     process_overdue_invoices()
     return {"status": "success", "message": "Recovery process triggered!"}
+
+@router.get("/")
+def get_invoices(session: Session = Depends(get_session)):
+    invoices = session.exec(select(Invoice)).all()
+    today = date.today()
+    results = []
+    for inv in invoices:
+        data = inv.model_dump()
+        data["days_passed"] = (today - inv.due_date).days
+        results.append(data)
+    return {"status": "success", "data": results}
 
 
 @router.post("/{invoice_id}/resend-link")
@@ -108,8 +119,8 @@ def write_off_invoice(
     invoice = session.get(Invoice, invoice_id)
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
-    if invoice.status in ("PAID", "BAD_DEBT", "LEGAL"):
-        raise HTTPException(status_code=400, detail=f"Invoice already in terminal status: {invoice.status}")
+    if invoice.status == "PAID":
+        raise HTTPException(status_code=400, detail="Cannot change status of a PAID invoice")
     previous_status = invoice.status
     invoice.status = body.outcome
     invoice.requires_call = False

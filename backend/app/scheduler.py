@@ -83,6 +83,10 @@ def process_overdue_invoices():
                 session.add(AuditLog(invoice_id=invoice.id, event_type="email_sent", timestamp=datetime.now(timezone.utc)))
                 session.commit()
                 print(f"Successfully sent {tone} email to {invoice.client_name}!")
+                
+        # Record batch completion
+        session.add(AuditLog(event_type="batch_scan_completed", payload="Recovery agent finished scanning overdue invoices.", timestamp=datetime.now(timezone.utc)))
+        session.commit()
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(process_overdue_invoices, 'cron', hour=8, minute=0) # 3.1 Runs daily at 8:00 AM

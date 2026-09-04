@@ -64,6 +64,11 @@ ngrok.yml
 backend/tests/
 tests/
 
+# Temporary test scripts
+test_resend*.py
+test_sg.py
+test_env.py
+list_invoices.py
 
 # SQLite
 *.db

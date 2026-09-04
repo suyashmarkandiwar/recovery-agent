@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 JWT_SECRET = os.getenv("JWT_SECRET", "super-secret-default-key")
 JWT_ALGORITHM = "HS256"

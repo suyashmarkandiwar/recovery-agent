@@ -3,7 +3,7 @@ from app.integrations.groq_client import generate_message
 
 def draft_recovery_email(customer_name: str, amount: float, invoice_id: int, tone: str, days_passed: int) -> dict:
     # 1. AI only generates the custom tone paragraph
-    prompt = f"Write a single, strictly {tone} 2 lines paragraph urging customer to pay their balance. Do not include any date for remitence of the amount"
+    prompt = f"Giving a <think></think> block and the content inside it in reply is strictly PROHIBITED just Write a single, strictly {tone} 2 lines paragraph urging customer to pay their balance. Do not include any date for remitence of the amount"
     
     try:
         raw_response = generate_message(prompt)

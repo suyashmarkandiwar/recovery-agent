@@ -15,7 +15,7 @@ app = FastAPI(title="Recovery Agent API", lifespan=lifespan)
 # Setup CORS to allow your React frontend to attach cookies
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=["http://localhost:3000", "http://localhost:5173"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,7 +32,5 @@ app.include_router(sendgrid_inbound.router, prefix="/api/email", tags=["Email"])
 
 app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
 
-@app.get("/")
-def health_check():
-    return {"status": "ok"}
+
 

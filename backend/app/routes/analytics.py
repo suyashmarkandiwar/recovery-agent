@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, col
 from sqlalchemy import func
 from app.db.database import get_session
-from app.db.models import Invoice
+from app.db.models import Invoice, AuditLog
 from app.security import get_current_user
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
@@ -41,4 +41,16 @@ def get_recovery_stats(session: Session = Depends(get_session)):
                 "active_overdue_invoices": overdue_count
             }
         }
+    }
+
+@router.get("/last-scan-time")
+def get_last_scan_time(session: Session = Depends(get_session)):
+    log = session.exec(
+        select(AuditLog)
+        .where(AuditLog.event_type == "batch_scan_completed")
+        .order_by(col(AuditLog.timestamp).desc())
+    ).first()
+    return {
+        "status": "success", 
+        "last_scan_time": log.timestamp.isoformat() if log else None
     }
