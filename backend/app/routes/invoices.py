@@ -46,6 +46,17 @@ async def resend_payment_link(invoice_id: int, session: Session = Depends(get_se
     session.add(audit)
     session.commit()
 
+    # If no payment link exists yet, create one on the fly
+    if not invoice.razorpay_short_url:
+        from app.integrations.razorpay_client import create_payment_link
+        link_id, short_url = create_payment_link(invoice.id, invoice.amount, invoice.client_name, invoice.client_email)
+        if not short_url:
+            raise HTTPException(status_code=500, detail="Failed to generate a Razorpay payment link. Try again.")
+        invoice.razorpay_link_id = link_id
+        invoice.razorpay_short_url = short_url
+        session.add(invoice)
+        session.commit()
+
     # 2. Send payment link via email
     subject = f"Payment Reminder for Invoice #{invoice.id}"
     body = f"Please pay your outstanding balance using this link: {invoice.razorpay_short_url}"

@@ -1,20 +1,14 @@
-from fastapi import FastAPI, APIRouter
-from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth
-from app.routes import invoices
 from contextlib import asynccontextmanager
-from app.scheduler import process_overdue_invoices
-from fastapi import APIRouter
-from app.scheduler import process_overdue_invoices
-from app.routes import razorpay_webhook
-from app.routes import sendgrid_inbound
-from app.routes import analytics
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.scheduler import scheduler
+from app.routes import auth, invoices, razorpay_webhook, sendgrid_inbound, analytics
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # scheduler.start()
+    scheduler.start()
     yield
-    # scheduler.shutdown()
+    scheduler.shutdown()
 
 app = FastAPI(title="Recovery Agent API", lifespan=lifespan)
 

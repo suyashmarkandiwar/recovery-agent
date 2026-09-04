@@ -72,7 +72,7 @@ def process_overdue_invoices():
                 continue
 
             # 3.6 & 3.7 Dispatch and Audit
-            final_subject = f"{draft['email_subject']} [ID:{invoice.id}]"
+            final_subject = f"{draft['email_subject']} [Invoice #{invoice.id}]"
             
             print(f"Subject: {final_subject}")
             print(f"Body: \n{final_body}")

@@ -38,7 +38,13 @@ async def razorpay_webhook(
     if event_type == "payment_link.paid":
         ref_id = data["payload"]["payment_link"]["entity"].get("reference_id")
         
-        if ref_id and ref_id.isdigit():
+        if not ref_id or not ref_id.isdigit():
+            session.add(AuditLog(
+                invoice_id=None,
+                event_type="webhook_unmatched",
+                payload=json.dumps({"reason": "missing_or_invalid_reference_id", "event_id": event_id})
+            ))
+        else:
             invoice = session.get(Invoice, int(ref_id))
             if invoice:
                 invoice.status = "PAID"
@@ -50,6 +56,12 @@ async def razorpay_webhook(
                 )
                 session.add(invoice)
                 session.add(audit)
+            else:
+                session.add(AuditLog(
+                    invoice_id=None,
+                    event_type="webhook_unmatched",
+                    payload=json.dumps({"reason": "invoice_not_found", "reference_id": ref_id, "event_id": event_id})
+                ))
 
     # 4. Mark Event as Processed
     session.add(ProcessedWebhookEvent(event_id=event_id))

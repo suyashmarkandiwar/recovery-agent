@@ -1,3 +1,6 @@
+# Application notes (kept local only)
+errors_and_fixes.md
+
 # Python
 __pycache__/
 *.py[cod]
