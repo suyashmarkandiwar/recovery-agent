@@ -87,4 +87,4 @@ def process_overdue_invoices():
         session.commit()
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(process_overdue_invoices, 'cron', hour=8, minute=0) # 3.1 Runs daily at 8:00 AM
+scheduler.add_job(process_overdue_invoices, 'cron', hour=8, minute=0) # Temporarily set to 18:46 for testing

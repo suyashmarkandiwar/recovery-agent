@@ -10,7 +10,7 @@ For most businesses, chasing down overdue payments is incredibly painful. Employ
 
 **The AI Recovery Agent solves this by fully automating the collection cycle:**
 - **Zero Human Effort:** The background agent autonomously scans for overdue invoices every day and handles the outreach completely on its own.
-- **Intelligent Escalation:** The AI dynamically adjusts its tone based on how late the invoice is (gentle reminder at 5 days, strict at 15 days, urgent at 25 days) to protect client relationships.
+- **Intelligent Escalation:** The AI respects a 10-day grace period before acting. It then sends polite reminders between days 11-20, switches to firm reminders between days 21-30, and escalates to a manual phone call on day 31+ (with a built-in 4-day cooldown between all emails to avoid spamming).
 - **Frictionless Payments:** By embedding 1-click Razorpay links directly into the AI-generated emails, it removes all friction for the customer, resulting in faster payments and significantly improved cash flow.
 
 ## 🚀 Key Features

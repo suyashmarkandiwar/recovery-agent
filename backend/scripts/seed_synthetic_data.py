@@ -22,10 +22,10 @@ def seed():
         if not session.exec(select(Invoice)).first():
             today = date.today()
             invoices = [
-                Invoice(client_name="Gary", client_email="gadak99840@fidhost.com", client_phone = "+91 9874568321", amount=500.0, due_date=today - timedelta(days=5)),
-                Invoice(client_name="Akash", client_email="beta@example.com", client_phone = "+91 9534568321", amount=1200.0, due_date=today - timedelta(days=15)),
-                Invoice(client_name="Ash", client_email="wodarex357@liondapt.com", client_phone = "+91 9874129321", amount=3400.0, due_date=today - timedelta(days=25)),
-                Invoice(client_name="Mukesh", client_email="delta@example.com", client_phone = "+91 9876548321", amount=8900.0, due_date=today - timedelta(days=35))
+                Invoice(client_name="Gukesh", client_email="sifig16174@daugr.com", client_phone = "+91 9874568321", amount=500.0, due_date=today - timedelta(days=5)),
+                Invoice(client_name="Ramesh", client_email="beta@example.com", client_phone = "+91 9534568321", amount=1200.0, due_date=today - timedelta(days=15)),
+                Invoice(client_name="Parag", client_email="yikofa5561@fidhost.com", client_phone = "+91 9874129321", amount=3400.0, due_date=today - timedelta(days=25)),
+                Invoice(client_name="Nakul", client_email="delta@example.com", client_phone = "+91 9876548321", amount=8900.0, due_date=today - timedelta(days=35))
             ]
             session.add_all(invoices)
             
