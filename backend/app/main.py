@@ -5,12 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.scheduler import scheduler
 from app.routes import auth, invoices, razorpay_webhook, sendgrid_inbound, analytics
 from sqlmodel import select, Session
-from app.db.database import engine
+from app.db.database import engine, create_db_and_tables
 from app.db.models import Employee
 from app.security import get_password_hash
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Ensure tables exist in the database
+    create_db_and_tables()
+    
     # Auto-create default admin employee on startup
     db = Session(engine)
     try:
