@@ -1,0 +1,77 @@
+# Application notes (kept local only)
+errors_and_fixes.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+env/
+backend/venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Node / Frontend (future)
+node_modules/
+.next/
+dist/
+build/
+
+# Uploads / temp
+uploads/
+tmp/
+*.tmp
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# MyPy / type-checking
+.mypy_cache/
+
+# Alembic
+alembic/versions/*.pyc
+
+# ngrok config
+ngrok.yml
+.ngrok2/
+
+# Tests
+backend/tests/
+tests/
+
+# Temporary test scripts
+test_resend*.py
+test_sg.py
+test_env.py
+list_invoices.py
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
