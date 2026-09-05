@@ -2,7 +2,8 @@
 
 An intelligent, full-stack automated debt collection system designed to help businesses recover overdue invoices with zero manual effort. The system leverages AI to draft context-aware, polite-but-firm emails, dynamically generates secure Razorpay payment links, and manages everything in a beautiful real-time React dashboard.
 
-> 🚧 **Deployment Status:** *Coming soon! The frontend will be deployed on **Vercel** and the FastAPI backend will be hosted on **Render**. (Note: The SendGrid Inbound Parse email webhook is fully built, but requires the purchase of a custom domain before it can route live replies in production).*
+> ✅ **Deployment Status:** Live! You can access the dashboard here: **[https://recovery-agent-theta.vercel.app](https://recovery-agent-theta.vercel.app)**. 
+> *(Note: The backend is hosted on Render. The SendGrid Inbound Parse email webhook is fully built and tested, but requires the purchase of a custom domain before it can route live replies in production).*
 
 ## 💡 What Does This Project Solve?
 For most businesses, chasing down overdue payments is incredibly painful. Employees waste hours manually tracking which invoices are late, writing awkward follow-up emails, and manually generating payment links. Worse, sending aggressive emails too early can ruin client relationships, while waiting too long reduces the chance of getting paid. 
