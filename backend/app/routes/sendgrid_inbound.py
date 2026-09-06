@@ -7,6 +7,7 @@ from sqlmodel import Session
 from app.db.database import get_session
 from app.db.models import Invoice, AuditLog
 from app.integrations.groq_client import generate_message
+from app.integrations.sendgrid_client import send_email
 from datetime import date
 
 router = APIRouter()
@@ -135,5 +136,21 @@ async def receive_inbound_email(request: Request, session: Session = Depends(get
     )
     session.add(invoice)
     session.add(audit)
+
+    # Negotiation Agent Reply
+    reply_subject = f"Re: Outstanding Balance Notice: {invoice.client_name} [Invoice #{invoice.id}]"
+    reply_body = f"Thank you for the update. We have paused your automated reminders and expect the payment on {proposed_date_str}.\n\nSincerely,\nFinance Department"
+    
+    if send_email(invoice.client_email, reply_subject, reply_body):
+        reply_audit = AuditLog(
+            invoice_id=invoice.id,
+            event_type="negotiation_reply_sent",
+            payload=json.dumps({
+                "proposed_date": proposed_date_str,
+                "sent_to": invoice.client_email
+            })
+        )
+        session.add(reply_audit)
+
     session.commit()
     return {"status": "accepted", "pause_followups_until": proposed_date_str}
