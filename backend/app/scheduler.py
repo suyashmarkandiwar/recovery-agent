@@ -3,6 +3,7 @@ from sqlmodel import Session, select, or_, col
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.db.database import engine
 from app.db.models import Invoice, AuditLog
+import pytz
 from app.agent.tone_logic import determine_tone
 from app.agent.orchestrator import draft_recovery_email
 from app.integrations.sendgrid_client import send_email
@@ -86,5 +87,6 @@ def process_overdue_invoices():
         session.add(AuditLog(event_type="batch_scan_completed", payload="Recovery agent finished scanning overdue invoices.", timestamp=datetime.now(timezone.utc)))
         session.commit()
 
-scheduler = BackgroundScheduler()
+
+scheduler = BackgroundScheduler(timezone=pytz.timezone("Asia/Kolkata"))
 scheduler.add_job(process_overdue_invoices, 'cron', hour=8, minute=0) 
