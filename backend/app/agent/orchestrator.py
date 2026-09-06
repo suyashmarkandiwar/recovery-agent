@@ -26,6 +26,7 @@ This is a formal notice that your balance of ₹{amount} for Invoice #{invoice_i
 Please process your secure payment using the following link: {{PAYMENT_LINK}}
 
 If you have already settled this invoice, kindly disregard this notice.
+For any questions or assistance, please contact our customer care at +91-1800-123-4567.
 
 Sincerely,
 Finance Department"""
