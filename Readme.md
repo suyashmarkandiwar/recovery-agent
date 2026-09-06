@@ -1,4 +1,4 @@
-# AI Recovery Agent
+# LedgerMind: AI Recovery Agent
 
 An intelligent, full-stack automated debt collection system designed to help businesses recover overdue invoices with zero manual effort. The system leverages AI to draft context-aware, polite-but-firm emails, dynamically generates secure Razorpay payment links, and manages everything in a beautiful real-time React dashboard.
 
