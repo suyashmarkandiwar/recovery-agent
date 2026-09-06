@@ -67,8 +67,26 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontFamily: 'sans-serif' }}>
-        Loading dashboard...
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', color: '#f8fafc', fontFamily: 'sans-serif' }}>
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            @keyframes pulse {
+              0%, 100% { opacity: 1; transform: scale(1); }
+              50% { opacity: 0.7; transform: scale(0.98); }
+            }
+          `}
+        </style>
+        <div style={{ position: 'relative', width: '48px', height: '48px', marginBottom: '20px' }}>
+          <div style={{ boxSizing: 'border-box', display: 'block', position: 'absolute', width: '48px', height: '48px', border: '4px solid #1e293b', borderRadius: '50%', zIndex: 1 }}></div>
+          <div style={{ boxSizing: 'border-box', display: 'block', position: 'absolute', width: '48px', height: '48px', border: '4px solid transparent', borderRadius: '50%', borderTopColor: '#3b82f6', animation: 'spin 1s linear infinite', zIndex: 2 }}></div>
+        </div>
+        <div style={{ fontSize: '16px', fontWeight: '500', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', color: '#94a3b8', letterSpacing: '0.5px' }}>
+          Loading...
+        </div>
       </div>
     );
   }
